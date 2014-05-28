@@ -1,0 +1,327 @@
+---
+title: "Regressions"
+output: html_document
+---
+
+
+
+
+Quiz1
+Question 1
+
+Consider the data set given below
+```{r}
+x <- c(0.18, -1.54, 0.42, 0.95)
+```
+And weights given by
+```{r}
+w <- c(2, 1, 3, 1)
+```
+
+Give the value of mu  that minimizes the least squares equation   Sum(wi(xi-mu)2) 
+
+```{r}
+sum(x * w)/sum(w)
+```
+
+
+
+
+Question 2
+
+Consider the following data set
+```{r}
+x <- c(0.8, 0.47, 0.51, 0.73, 0.36, 0.58, 0.57, 0.85, 0.44, 0.42)
+y <- c(1.39, 0.72, 1.55, 0.48, 1.19, -1.59, 1.23, -0.65, 1.49, 0.05)
+```
+Fit the regression through the origin and get the slope treating y as the outcome and x as the regressor. (Hint, do not center the data since we want regression through the origin, not through the means of the data.)
+
+
+```{r}
+lm(y ~ x-1)
+sum(y * x)/sum(x^2)
+```
+
+
+
+
+
+Question 3
+
+Do data(mtcars) from the datasets package and fit the regression model with mpg as the outcome and weight as the predictor. Give the slope coefficient.
+```{r}
+data(mtcars)
+lm(mtcars$mpg ~ mtcars$wt)
+cor(mtcars$mpg, mtcars$wt) * sd(mtcars$mpg)/sd(mtcars$wt)
+
+```
+
+
+
+
+Question 4
+
+Consider data with an outcome (Y) and a predictor (X). The standard deviation of the predictor is one half that of the outcome. The correlation between the two variables is .5. What value would the slope coefficient for the regression model with Y as the outcome and X   as the predictor?
+
+1
+
+
+Question 5
+
+
+Students were given two hard tests and scores were normalized to have empirical mean 0 and variance 1. The correlation between the scores on the two tests was 0.4. What would be the expected score on Quiz 2 for a student who had a normalized score of 1.5 on Quiz 1?
+
+This is the classic regression to the mean problem. We are expecting the score to get multiplied by 0.4. So
+```{r}
+1.5 * 0.4
+```
+
+
+
+
+Question 6
+
+Consider the data given by the following
+```{r}
+x <- c(8.58, 10.46, 9.01, 9.64, 8.86)
+```
+
+What is the value of the first measurement if x were normalized (to have mean 0 and variance 1)?
+```{r}
+((x - mean(x))/sd(x))[1]
+
+```
+
+
+Question 7
+
+Consider the following data set (used above as well). What is the intercept for fitting the model with x as the predictor and y as the outcome?
+```{r}
+x <- c(0.8, 0.47, 0.51, 0.73, 0.36, 0.58, 0.57, 0.85, 0.44, 0.42)
+y <- c(1.39, 0.72, 1.55, 0.48, 1.19, -1.59, 1.23, -0.65, 1.49, 0.05)
+```
+
+```{r}
+coef(lm(y~x))[1]
+```
+
+
+Question 8
+
+You know that both the predictor and response have mean 0. What can be said about the intercept when you fit a linear regression?
+It must be identically 0
+
+
+
+Question 9
+
+Consider the data given by
+```{r}
+x <- c(0.8, 0.47, 0.51, 0.73, 0.36, 0.58, 0.57, 0.85, 0.44, 0.42)
+```
+
+What value minimizes the sum of the squared distances between these points and itself?
+
+This is the least squares estimate, which works out to be the mean in this case.
+```{r}
+mean(x)
+```
+
+
+Question 10
+
+Consider taking the slope having fit Y as the outcome and X as the predictor,  B1 and the slope from fitting X as the outcome and Y as the predictor, G1 , and dividing the two as B1/G1. What is this ratio always equal to?
+
+Var(Y)/Var(X)
+
+
+
+Quiz 2
+
+Question 1
+
+Consider the following data with x as the predictor and y as as the outcome. 
+```{r}
+x <- c(0.61, 0.93, 0.83, 0.35, 0.54, 0.16, 0.91, 0.62, 0.62)
+y <- c(0.67, 0.84, 0.6, 0.18, 0.85, 0.47, 1.1, 0.65, 0.36)
+```
+
+Give a P-value for the two sided hypothesis test of whether  B1   from a linear regression model is 0 or not.
+
+```{r}
+fit <- lm(y ~ x);
+summary(fit)
+```
+
+
+
+
+Question 2
+
+Consider the previous problem, give the estimate of the residual standard deviation.
+
+```{r}
+fit <- lm(y ~ x);
+summary(fit)
+```
+
+
+Question 3
+
+In the mtcars data set, fit a linear regression model of weight (predictor) on mpg (outcome). Get a 95% confidence interval for the expected mpg at the average weight. What is the lower endpoint?
+
+```{r}
+data(mtcars)
+y <- mtcars$mpg
+x <- mtcars$wt
+fit <- lm(y ~ x);
+
+sumCoef <- summary(fit)$coefficients
+sumCoef[1,1] + c(-1, 1) * qt(.975, df = fit$df) * sumCoef[1, 2]
+
+newdata <- data.frame(x = mean(x))
+predict(fit, newdata, interval = ("confidence"))
+
+```
+
+
+Question 4
+
+Refer to the previous question. Read the help file for mtcars. What is the weight coefficient interpreted as?
+
+The estimated expected change in mpg per 1,000 lb increase in weight.
+
+
+
+Question 5
+
+Consider again the mtcars data set and a linear regression model with mpg as predicted by weight (1,000 lbs). A new car is coming weighing 3000 pounds. Construct a 95% prediction interval for its mpg. What is the upper endpoint? 
+
+```{r}
+data(mtcars)
+y <- mtcars$mpg
+x <- mtcars$wt
+fit <- lm(y ~ x);
+
+sumCoef <- summary(fit)$coefficients
+sumCoef[1,1] + c(-1, 1) * qt(.975, df = fit$df) * sumCoef[1, 2]
+
+
+newdata <- data.frame(x = 3)
+predict(fit, newdata, interval = ("confidence"))
+predict(fit, newdata, interval = ("prediction"))
+
+
+```
+
+
+Question 6
+
+Consider again the mtcars data set and a linear regression model with mpg as predicted by weight (in 1,000 lbs). A “short” ton is defined as 2,000 lbs. Construct a 95% confidence interval for the expected change in mpg per 1 short ton increase in weight. Give the lower endpoint.
+```{r}
+data(mtcars)
+y <- mtcars$mpg
+x <- mtcars$wt
+fit <- lm(y ~ x);
+
+
+
+newdata <- data.frame(x = 2)
+predict(fit, newdata, interval = ("confidence"))
+predict(fit, newdata, interval = ("prediction"))
+```
+
+
+
+Question 7
+
+If my X from a linear regression is measured in centimeters and I convert it to meters what would happen to the slope coefficient?
+
+It would get multiplied by 100.
+
+
+
+Question 8
+
+I have an outcome,  , and a predictor,   and fit a linear regression model with       to obtain       and      . What would be the consequence to the subsequent slope and intercept if I were to refit the model with a new regressor,   for some constant,  ?
+
+The new intercept would be  B0hat - c * B1hat
+
+
+
+Question 9
+
+Refer back to the mtcars data set with mpg as an outcome and weight (wt) as the predictor. About what is the ratio of the the sum of the squared errors,              when comparing a model with just an intercept (denominator) to the model with the intercept and slope (numerator)? 
+
+0.25
+
+
+Question 10
+
+Do the residuals always have to sum to 0 in linear regression?
+
+If an intercept is included, then they will sum to 0.
+
+
+
+
+
+Quiz 3
+
+Question 1
+
+Consider the mtcars data set. Fit a model with mpg as the outcome that includes number of cylinders as a factor variable and weight as confounder. Give the adjusted estimate for the expected change in mpg comparing 8 cylinders to 4.
+
+
+
+Question 2
+
+Consider the mtcars data set. Fit a model with mpg as the outcome that includes number of cylinders as a factor variable and weight as confounder. Compare the adjusted by weight effect of 8 cylinders as compared to 4 the unadjusted. What can be said about the effect?.
+
+
+
+Question 3
+
+Consider the mtcars data set. Fit a model with mpg as the outcome that considers number of cylinders as a factor variable and weight as confounder. Consider the model with an interaction between cylinders and weight and one without. Give the P-value for the likelihood ratio test comparing the two models and suggest a model using 0.05 as a type I error rate significance benchmark. 
+
+
+
+Question 4
+
+Consider the mtcars data set. Fit a model with mpg as the outcome that includes number of cylinders as a factor variable and weight inlcuded in the model as
+lm(mpg ~ I(wt * 0.5) + factor(cyl), data = mtcars)
+
+
+How is the wt coefficient interpretted?
+
+
+
+
+Question 5
+
+Consider the following data set
+```{r}
+x <- c(0.586, 0.166, -0.042, -0.614, 11.72)
+y <- c(0.549, -0.026, -0.127, -0.751, 1.344)
+```
+
+Give the hat diagonal for the most influential point
+
+
+
+
+Question 6
+
+Consider the following data set
+```{r}
+x <- c(0.586, 0.166, -0.042, -0.614, 11.72)
+y <- c(0.549, -0.026, -0.127, -0.751, 1.344)
+```
+
+Give the slope dfbeta for the point with the highest hat value.
+
+
+
+Question 7
+
+Consider a regression relationship between Y and X with and without adjustment for a third variable Z. Which of the following is true about comparing the regression coefficient between Y and X with and without adjustment for Z.
